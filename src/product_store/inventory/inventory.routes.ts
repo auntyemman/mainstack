@@ -15,4 +15,3 @@ inventory.put('/:id', authUser, adminRBAC, inventoryCont.updateInventory);
 inventory.put('/:id/quantity/add', authUser, adminRBAC, inventoryCont.addToProductQuantity);
 inventory.put('/:id/quantity/remove', authUser, adminRBAC, inventoryCont.removeFromProductQuantity);
 inventory.get('/', authUser, inventoryCont.getInventories);
-inventory.delete('/:id', authUser, adminRBAC, inventoryCont.deleteInventory);

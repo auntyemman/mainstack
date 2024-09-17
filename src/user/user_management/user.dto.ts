@@ -7,6 +7,8 @@ import {
   Matches,
   IsOptional,
   IsEnum,
+  IsPostalCode,
+  IsArray,
 } from 'class-validator';
 
 export enum UserRole {
@@ -89,18 +91,38 @@ export class ResetPasswordDTO {
   password!: string;
 }
 
-export class UpdateDTO {
+export class AddressDTO {
   @IsString()
-  @IsOptional()
-  name?: string;
-
   @IsNotEmpty()
+  street!: string;
+
   @IsString()
-  @MinLength(8)
+  @IsNotEmpty()
+  city!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  state!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsPostalCode()
+  postalCode!: string;
+
+  @IsString()
+  @IsNotEmpty()
+  country!: string;
+}
+export class UpdateDTO {
   @IsOptional()
-  @Matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).*$/, {
-    message:
-      'Password must contain at least one digit, one lowercase, one uppercase letter, and one special character',
-  })
-  password?: string;
+  @IsString()
+  firstName?: string;
+
+  @IsOptional()
+  @IsString()
+  lastName?: string;
+
+  @IsOptional()
+  @IsArray()
+  addresses?: AddressDTO;
 }

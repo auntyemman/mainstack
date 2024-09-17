@@ -183,34 +183,6 @@ export class InventoryController {
   }
 
   /**
-   * Deletes an inventory
-   * @example
-   * curl -X DELETE \
-   *   http://localhost:3000/api/v1/inventory/61c7c5c5f1e7f39d94937f2c
-   * @param {Request} req - The express request object
-   * @param {Response} res - The express response object
-   * @param {NextFunction} next - The express next function
-   * @returns {Promise<object | unknown>} - The response object
-   */
-  async deleteInventory(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ): Promise<object | unknown> {
-    try {
-      const id = req.params.id;
-      const inventory = await this.inventoryService.deleteInventory(id);
-      return res.status(200).json({
-        status: 'success',
-        message: 'Inventory deleted successfully',
-        data: { inventory },
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  /**
    * Fetches all inventories
    * @example
    * curl -X GET \

@@ -77,11 +77,13 @@ export class ProductController {
     try {
       const limit = parseInt(req.query.limit as string) || 10;
       const page = parseInt(req.query.page as string) || 1;
-      const { order, orderBy, name, status, createdBy } = req.query;
+      const { category, tags, name, status, createdBy } = req.query;
       const query: any = {};
-      if (order && orderBy) {
-        query.order = order;
-        query.orderBy = orderBy || 'desc';
+      if (category) {
+        query.category = category;
+      }
+      if (tags) {
+        query.tags = tags;
       }
       if (name) {
         query.name = name;

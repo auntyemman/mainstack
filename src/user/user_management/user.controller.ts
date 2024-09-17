@@ -101,10 +101,10 @@ export class UserController {
   }
 
   async updateProfile(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
-    const { userId } = res.locals.user;
+    const { _id } = res.locals.user.user;
     try {
       const validated = await validateRequest(UpdateDTO, req.body);
-      const updatedUser = await this.userService.updateUser(userId, validated);
+      const updatedUser = await this.userService.updateUser(_id, validated);
       return res.status(200).json({
         status: 'success',
         message: 'user updated succesfully',

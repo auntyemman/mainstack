@@ -11,3 +11,5 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URI=${DATABASE_URI}
+    env_file:
+      - .env
