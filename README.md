@@ -26,7 +26,7 @@
 git clone 
 
 2. **Install dependencies:**
-npm install or yarn install
+`npm install or yarn install`
 
 3. **Set up environment variables:**
 - Create a `.env` file in the root directory.
@@ -37,11 +37,12 @@ npm install or yarn install
   DATABASE_URI=your_database_connection_string
   JWT_SECRET=your_jwt_secret_key
   ```
+4. **Run test:**
+`npm run test or yarn test`
+5. **Start the development server:**
+`npm run dev or yarn dev`
 
-4. **Start the development server:**
-npm run dev or yarn dev
-
-5. **Access the application:**
+6. **Access the application:**
 - Open a web browser and navigate to `http://localhost:5500` to access the application.
 
 ## License
