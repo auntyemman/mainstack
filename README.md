@@ -12,7 +12,7 @@
 - **Validation:** Class-validator for input validation and sanitation
 - **Security:** Helmet for HTTP header security, CORS for cross-origin resource sharing
 - **Test:** Jest and supertest
-- **containerization:** Docker
+- **Containerization:** Docker
 
 
 ## Design Pattern
