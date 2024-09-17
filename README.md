@@ -1,9 +1,9 @@
 # Mainstack APIs
 
 ## Features
-User authentication and user management
-Product Management
-Inventory management
+- User authentication and user management
+- Product Management
+- Inventory management
 
 ## Tech Stack
 - **Backend:** Node.js, Express.js, EventEmmitter2
