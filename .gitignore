@@ -3,3 +3,4 @@ dist
 .env
 error.log
 coverage
+data
