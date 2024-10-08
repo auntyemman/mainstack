@@ -1,6 +1,6 @@
 export enum JWT_Expiration {
-  accessToken = '5h',
-  createRefreshToken = '1d',
+  accessToken = '5m',
+  refreshToken = '30d',
 }
 
 export type User = {

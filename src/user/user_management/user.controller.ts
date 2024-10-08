@@ -61,16 +61,68 @@ export class UserController {
     try {
       const validated = await validateRequest(SignInDTO, req.body);
       const user = await this.userService.login(validated);
+
+      // Generate both access and refresh tokens
       const accessToken = this.authService.createAccessToken({ user: user });
+      const refreshToken = this.authService.createRefreshToken({ user: user });
+
+      // Store refresh token in HTTP-only cookies
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true, // Prevents JS from accessing the token
+        secure: true, // process.env.NODE_ENV === 'production', // Set secure to true in production
+        sameSite: 'strict',
+      });
+
       return res.status(200).json({
         status: 'success',
         message: 'Logged in successfully',
-        data: { accessToken },
+        data: { accessToken, refreshToken },
       });
     } catch (error) {
       next(error);
     }
   }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+  
+      if (!refreshToken) {
+        throw new APIError('Refresh token not found');
+      }
+  
+      // Verify the refresh token
+      const decoded = await AuthenticationService.verifyJWT(refreshToken);
+  
+      // Generate a new access token
+      const newAccessToken = this.authService.createAccessToken({ user: decoded });
+  
+      return res.status(200).json({
+        status: 'success',
+        message: 'New access token generated',
+        data: { accessToken: newAccessToken },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async logout(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
+    try {
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: true, // process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+      
+      return res.status(200).json({
+        status: 'success',
+        message: 'Logged out successfully',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }  
 
   async getUser(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
     try {
