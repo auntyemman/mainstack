@@ -29,6 +29,6 @@ export class AuthenticationService {
   };
 
   private token = (payload: object, expiration: string) => {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: expiration });
+    return jwt.sign(payload, JWT_SECRET, { expiresIn: expiration, algorithm: 'HS256' });
   };
 }

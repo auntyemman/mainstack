@@ -2,6 +2,7 @@ import { IUser } from './user.model';
 import { hashPassword, comparePasswords } from '../../common/utils/password_hash';
 import { UserRepository } from './user.repository';
 import { APIError, BadRequestError, NotFoundError } from '../../common/utils/custom_error';
+import crypto from 'crypto';
 
 // User Service class for user management
 export class UserService {
@@ -29,6 +30,42 @@ export class UserService {
     if (!passwordMatch) {
       throw new BadRequestError('Password not match');
     }
+    return user;
+  }
+
+  async generateUserKeys(userId: string) {
+    // Generate a new key pair
+    const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: {
+        type: 'spki',
+        format: 'pem',
+      },
+      privateKeyEncoding: {
+        type: 'pkcs8',
+        format: 'pem',
+      },
+    });
+
+    const hashedPrivateKey = await hashPassword(privateKey);
+    // Store the keys in the mock database (in a real application, use a secure storage solution)
+
+    // await this.updateUser(userId, { publicKey, hashedPrivateKey });
+    return {
+      publicKey,
+      hashedPrivateKey,
+    };
+  }
+
+  // get user public key
+  async getPulickey(userId: string) {
+    const user = await this.getUser(userId);
+    return user.publicKey;
+  }
+
+  // delete user public and private keys
+  async deleteKeys(userId: string) {
+    const user = await this.updateUser(userId, { publicKey: null, privateKey: null });
     return user;
   }
 
