@@ -35,7 +35,7 @@ describe('authUser Middleware', () => {
       .set('Authorization', 'Bearer validToken')
       .expect(200)
       .expect('Content-Type', /json/)
-      .expect(res => {
+      .expect((res) => {
         expect(res.body).toEqual({ message: 'Access granted' });
       });
 
@@ -47,7 +47,7 @@ describe('authUser Middleware', () => {
       .get('/protected')
       .expect(401)
       .expect('Content-Type', /json/) // Expecting JSON here
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.error).toBe('Not authorized');
       });
   });
@@ -62,7 +62,7 @@ describe('authUser Middleware', () => {
       .set('Authorization', 'Bearer invalidToken')
       .expect(401)
       .expect('Content-Type', /json/) // Expecting JSON here
-      .expect(res => {
+      .expect((res) => {
         expect(res.body.error).toBe('Not authorized');
       });
 

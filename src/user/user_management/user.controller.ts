@@ -86,17 +86,17 @@ export class UserController {
   async refreshToken(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
     try {
       const refreshToken = req.cookies.refreshToken;
-  
+
       if (!refreshToken) {
         throw new APIError('Refresh token not found');
       }
-  
+
       // Verify the refresh token
       const decoded = await AuthenticationService.verifyJWT(refreshToken);
-  
+
       // Generate a new access token
       const newAccessToken = this.authService.createAccessToken({ user: decoded });
-  
+
       return res.status(200).json({
         status: 'success',
         message: 'New access token generated',
@@ -114,7 +114,7 @@ export class UserController {
         secure: true, // process.env.NODE_ENV === 'production',
         sameSite: 'strict',
       });
-      
+
       return res.status(200).json({
         status: 'success',
         message: 'Logged out successfully',
@@ -122,7 +122,7 @@ export class UserController {
     } catch (error) {
       next(error);
     }
-  }  
+  }
 
   async getUser(req: Request, res: Response, next: NextFunction): Promise<object | unknown> {
     try {

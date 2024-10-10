@@ -1,15 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
 import { AuthenticationService } from '../../user/authentication/authentication.service';
-import { NotAuthorizedError } from '../utils/custom_error';
+import { BadRequestError, NotAuthorizedError } from '../utils/custom_error';
 
-/**
- * Authentication middleware that verifies the JWT token passed in the
- * Authorization header. If the token is valid, it sets the user object in
- * the response locals and calls the next middleware. If the token is invalid,
- * it throws a NotAuthorizedError.
- */
 export const authUser = async (req: Request, res: Response, next: NextFunction) => {
-   const authentication = new AuthenticationService();
+  const authentication = new AuthenticationService();
+
   try {
     const authorizationHeader = req.headers.authorization;
 
@@ -18,31 +13,41 @@ export const authUser = async (req: Request, res: Response, next: NextFunction) 
     }
 
     const token = authorizationHeader.split(' ')[1];
-    const decoded = await AuthenticationService.verifyJWT(token);
-    
-    res.locals.user = decoded;
-    next();
-  } catch (err: any) {
-    if (err.name === 'TokenExpiredError') {
-      // If access token is expired, check for refresh token
+    const result = await AuthenticationService.verifyJWT(token);
+    if (!result) {
+      throw new NotAuthorizedError();
+    }
+    const { decoded, expired } = result;
+
+    if (expired) {
+      // Handle token expiration
       const refreshToken = req.cookies.refreshToken;
       if (!refreshToken) {
-        next(err);
-        // throw new NotAuthorizedError();
+        throw new BadRequestError('you may need to login again');
       }
 
-      // Verify the refresh token
-      const decodedRefreshToken = await AuthenticationService.verifyJWT(refreshToken);
+      const refreshTokenResult = await AuthenticationService.verifyJWT(refreshToken);
+      if (
+        !refreshTokenResult ||
+        refreshTokenResult.valid === false ||
+        refreshTokenResult.expired === true
+      ) {
+        throw new NotAuthorizedError();
+      }
 
       // Issue new access token
-      const newAccessToken = authentication.createAccessToken({ user: decodedRefreshToken });
+      const newAccessToken = authentication.createAccessToken({ user: refreshTokenResult.decoded });
 
       // Set new access token in response header
       res.setHeader('Authorization', `Bearer ${newAccessToken}`);
 
-      res.locals.user = decodedRefreshToken; // Set the user data from refresh token
-      return next(); // Proceed with new access token
+      res.locals.user = refreshTokenResult.decoded; // Set user data from refresh token
+    } else {
+      res.locals.user = decoded; // Set user data from access token
     }
-    next(err);
+
+    next(); // Proceed to next middleware
+  } catch (err) {
+    next(err); // Pass any errors to the next middleware
   }
 };
